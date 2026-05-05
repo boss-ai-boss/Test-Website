@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Alex Nova — Portfolio</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#05050f;--bg2:#0d0d1f;--bg3:#111128;
+  --cyan:#00e5ff;--purple:#a855f7;--pink:#f472b6;
+  --text:#e2e8f0;--muted:#64748b;--border:rgba(0,229,255,0.12);
+  --card:rgba(13,13,31,0.8);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+
+/* Canvas BG */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.4}
+
+/* Layout */
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 2rem}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;background:rgba(5,5,15,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-size:1.2rem;font-weight:700;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;letter-spacing:.05em;transition:color .3s}
+.nav-links a:hover{color:var(--cyan)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
+.hero-inner{max-width:750px}
+.hero-tag{display:inline-block;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);padding:.35rem .9rem;border-radius:20px;margin-bottom:1.5rem}
+.hero-name{font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;margin-bottom:1rem}
+.hero-name .glow{background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 60%,var(--pink) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.15rem;color:var(--muted);max-width:560px;line-height:1.7;margin-bottom:2.5rem}
+.cursor{display:inline-block;width:3px;height:1.1em;background:var(--cyan);margin-left:4px;vertical-align:text-bottom;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.btn-row{display:flex;gap:1rem;flex-wrap:wrap}
+.btn{padding:.8rem 2rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .3s;letter-spacing:.04em;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#05050f;border:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,229,255,.35)}
+.btn-outline{background:transparent;color:var(--cyan);border:1px solid rgba(0,229,255,.4)}
+.btn-outline:hover{background:rgba(0,229,255,.07);border-color:var(--cyan);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:3rem;margin-top:3.5rem;padding-top:2.5rem;border-top:1px solid var(--border)}
+.stat-num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.8rem;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:.2rem}
+
+/* SECTION */
+section{padding:7rem 0}
+.section-label{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:.8rem}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:1rem;line-height:1.1}
+.section-desc{color:var(--muted);font-size:1.05rem;max-width:520px;line-height:1.7}
+.section-head{margin-bottom:4rem}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.about-avatar{position:relative}
+.avatar-box{width:100%;aspect-ratio:1;border-radius:20px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.avatar-initials{font-size:5rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;z-index:1}
+.avatar-ring{position:absolute;inset:-2px;border-radius:22px;background:linear-gradient(135deg,var(--cyan),var(--purple));z-index:-1;animation:spin 6s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.avatar-inner{position:absolute;inset:2px;border-radius:18px;background:var(--bg2)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2rem}
+.tag{padding:.4rem .9rem;border-radius:6px;font-size:.8rem;font-weight:500;background:rgba(0,229,255,.07);color:var(--cyan);border:1px solid rgba(0,229,255,.18);letter-spacing:.04em}
+.tag.purple{background:rgba(168,85,247,.07);color:#c084fc;border-color:rgba(168,85,247,.2)}
+.tag.pink{background:rgba(244,114,182,.07);color:var(--pink);border-color:rgba(244,114,182,.2)}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.8rem;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,229,255,.04),rgba(168,85,247,.04));opacity:0;transition:opacity .3s}
+.project-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.35);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.project-card:hover::before{opacity:1}
+.proj-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(168,85,247,.15));border:1px solid rgba(0,229,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1.2rem}
+.proj-title{font-size:1.15rem;font-weight:700;margin-bottom:.6rem}
+.proj-desc{font-size:.9rem;color:var(--muted);line-height:1.6;margin-bottom:1.2rem}
+.proj-stack{display:flex;flex-wrap:wrap;gap:.4rem}
+.stack-badge{font-size:.72rem;padding:.25rem .6rem;border-radius:5px;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08);font-family:monospace}
+.proj-link{position:absolute;top:1.5rem;right:1.5rem;width:32px;height:32px;border-radius:8px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:.8rem;text-decoration:none;transition:all .3s}
+.proj-link:hover{background:rgba(0,229,255,.2)}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.8rem}
+.skill-card-title{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:1.4rem}
+.skill-item{margin-bottom:1.1rem}
+.skill-name-row{display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.9rem}
+.skill-pct{font-size:.8rem;color:var(--muted)}
+.bar-track{height:4px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width 1.5s cubic-bezier(.16,1,.3,1)}
+
+/* CONTACT */
+.contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.contact-info p{color:var(--muted);line-height:1.8;margin-bottom:2rem}
+.contact-links{display:flex;flex-direction:column;gap:.8rem}
+.c-link{display:flex;align-items:center;gap.8rem;color:var(--text);text-decoration:none;padding:.9rem 1.2rem;background:var(--card);border:1px solid var(--border);border-radius:10px;transition:all .3s;font-size:.9rem}
+.c-link:hover{border-color:rgba(0,229,255,.35);background:rgba(0,229,255,.05);transform:translateX(4px)}
+.c-link-icon{width:36px;height:36px;border-radius:8px;background:rgba(0,229,255,.1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;margin-right:.8rem}
+.form-group{margin-bottom:1.2rem}
+.form-group label{display:block;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.form-group input,.form-group textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .3s;resize:none}
+.form-group input:focus,.form-group textarea:focus{border-color:rgba(0,229,255,.5)}
+.form-group textarea{height:120px}
+.btn-send{width:100%;padding:.9rem;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#05050f;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;letter-spacing:.05em;transition:all .3s}
+.btn-send:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,229,255,.3)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:2rem 0;text-align:center;color:var(--muted);font-size:.85rem}
+footer span{color:var(--cyan)}
+
+/* DIVIDER */
+.divider{width:60px;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:2px;margin:1.2rem 0}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <div class="nav-logo">AN/</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="hero-tag">Available for work</div>
+      <h1 class="hero-name">
+        Hi, I'm <span class="glow">Alex Nova</span>
+      </h1>
+      <p class="hero-sub">
+        <span id="typed"></span><span class="cursor"></span>
+      </p>
+      <div class="btn-row">
+        <a href="#projects" class="btn btn-primary">View My Work ↓</a>
+        <a href="#contact" class="btn btn-outline">Get in Touch</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">5+</div><div class="stat-label">Years Experience</div></div>
+        <div><div class="stat-num">40+</div><div class="stat-label">Projects Shipped</div></div>
+        <div><div class="stat-num">15+</div><div class="stat-label">Happy Clients</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="about-grid reveal">
+      <div class="about-avatar">
+        <div style="position:relative">
+          <div class="avatar-ring"></div>
+          <div class="avatar-inner"></div>
+          <div class="avatar-box" style="position:relative;z-index:2">
+            <div class="avatar-initials">AN</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">About Me</div>
+        <h2 class="section-title">Crafting the future,<br>one line at a time.</h2>
+        <div class="divider"></div>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:1rem">I'm a full-stack developer and UI designer with a passion for building sleek, high-performance digital products. I blend engineering rigor with creative design to create experiences that feel both powerful and effortless.</p>
+        <p style="color:var(--muted);line-height:1.8">When I'm not pushing pixels or writing code, I'm exploring the intersection of AI and human-centered design — trying to figure out what the future should feel like.</p>
+        <div class="skill-tags">
+          <span class="tag">React</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag purple">Node.js</span>
+          <span class="tag purple">Python</span>
+          <span class="tag pink">Figma</span>
+          <span class="tag pink">UI/UX</span>
+          <span class="tag">Three.js</span>
+          <span class="tag">AI/ML</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-label">Work</div>
+      <h2 class="section-title">Featured Projects</h2>
+      <p class="section-desc">A selection of things I've built — from AI-powered tools to immersive web experiences.</p>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="proj-icon">🤖</div>
+        <div class="proj-title">NeuralDash</div>
+        <p class="proj-desc">Real-time AI analytics dashboard with predictive modeling, live data streams, and an adaptive interface that learns user behavior.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">React</span>
+          <span class="stack-badge">Python</span>
+          <span class="stack-badge">TensorFlow</span>
+          <span class="stack-badge">WebSockets</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="proj-icon">🌌</div>
+        <div class="proj-title">VoidSpace</div>
+        <p class="proj-desc">An immersive 3D portfolio experience built with Three.js. Users navigate a procedurally generated space environment to explore project showcases.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">Three.js</span>
+          <span class="stack-badge">GLSL</span>
+          <span class="stack-badge">WebGL</span>
+          <span class="stack-badge">GSAP</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="proj-icon">⚡</div>
+        <div class="proj-title">FlowForge</div>
+        <p class="proj-desc">Visual workflow automation tool. Drag-and-drop node editor that lets teams build complex integrations without writing a single line of code.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">Vue 3</span>
+          <span class="stack-badge">Node.js</span>
+          <span class="stack-badge">PostgreSQL</span>
+          <span class="stack-badge">Docker</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="proj-icon">🔐</div>
+        <div class="proj-title">CipherVault</div>
+        <p class="proj-desc">End-to-end encrypted password and secrets manager with biometric auth, zero-knowledge architecture, and browser extension support.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">Rust</span>
+          <span class="stack-badge">React</span>
+          <span class="stack-badge">AES-256</span>
+          <span class="stack-badge">WebAuthn</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="proj-icon">🎨</div>
+        <div class="proj-title">Prism UI</div>
+        <p class="proj-desc">Open-source design system with 80+ accessible components, dark/light theming, a Figma plugin, and auto-generated documentation.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">TypeScript</span>
+          <span class="stack-badge">Storybook</span>
+          <span class="stack-badge">Radix UI</span>
+          <span class="stack-badge">CSS</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="proj-icon">📡</div>
+        <div class="proj-title">OrbitalAPI</div>
+        <p class="proj-desc">Unified API gateway with smart rate limiting, request caching, auto-scaling, and a beautiful developer portal with live playground.</p>
+        <div class="proj-stack">
+          <span class="stack-badge">Go</span>
+          <span class="stack-badge">Redis</span>
+          <span class="stack-badge">Kubernetes</span>
+          <span class="stack-badge">GraphQL</span>
+        </div>
+        <a class="proj-link" href="#">↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-label">Expertise</div>
+      <h2 class="section-title">Skills & Tools</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-card-title">Frontend</div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>React / Next.js</span><span class="skill-pct">95%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="95" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>TypeScript</span><span class="skill-pct">90%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="90" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>Three.js / WebGL</span><span class="skill-pct">80%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="80" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>CSS / Animation</span><span class="skill-pct">92%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="92" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-title">Backend</div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>Node.js / Express</span><span class="skill-pct">88%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="88" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>Python / FastAPI</span><span class="skill-pct">85%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="85" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>PostgreSQL / Redis</span><span class="skill-pct">82%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="82" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>GraphQL</span><span class="skill-pct">78%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="78" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-title">Design & DevOps</div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>Figma / Prototyping</span><span class="skill-pct">90%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="90" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>Docker / Kubernetes</span><span class="skill-pct">80%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="80" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>CI/CD Pipelines</span><span class="skill-pct">75%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="75" style="width:0%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name-row"><span>AI / ML Integration</span><span class="skill-pct">83%</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="83" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Let's Build Together</h2>
+    </div>
+    <div class="contact-inner reveal">
+      <div class="contact-info">
+        <p>Have a project in mind? I'm always open to discussing new opportunities, creative ideas, or just a good conversation about tech and design.</p>
+        <div class="contact-links">
+          <a class="c-link" href="#">
+            <div class="c-link-icon">✉</div>
+            alex@nova.dev
+          </a>
+          <a class="c-link" href="#">
+            <div class="c-link-icon">in</div>
+            linkedin.com/in/alexnova
+          </a>
+          <a class="c-link" href="#">
+            <div class="c-link-icon">gh</div>
+            github.com/alexnova
+          </a>
+          <a class="c-link" href="#">
+            <div class="c-link-icon">𝕏</div>
+            @alexnova_dev
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="Your name"/>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Tell me about your project..."></textarea>
+        </div>
+        <button class="btn-send">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Designed & built by <span>Alex Nova</span> — 2025. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// Particle canvas
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();
+window.addEventListener('resize',resize);
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*W,y:Math.random()*H,
+    vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,
+    r:Math.random()*1.5+.5,
+    a:Math.random()*.6+.2
+  });
+}
+function drawParticles(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,229,255,${p.a})`;
+    ctx.fill();
+  });
+  particles.forEach((a,i)=>{
+    for(let j=i+1;j<particles.length;j++){
+      const b=particles[j];
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<120){
+        ctx.beginPath();
+        ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(0,229,255,${.08*(1-d/120)})`;
+        ctx.lineWidth=.5;ctx.stroke();
+      }
+    }
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Typewriter
+const lines=['Full-Stack Developer & UI Designer building immersive digital experiences.','Creating interfaces that live at the edge of art and engineering.','Turning bold ideas into fast, beautiful, intelligent products.'];
+let li=0,ci=0,del=false;
+const el=document.getElementById('typed');
+function type(){
+  const cur=lines[li];
+  if(!del){
+    el.textContent=cur.slice(0,++ci);
+    if(ci===cur.length){del=true;setTimeout(type,2200);return}
+    setTimeout(type,38);
+  } else {
+    el.textContent=cur.slice(0,--ci);
+    if(ci===0){del=false;li=(li+1)%lines.length;setTimeout(type,400);return}
+    setTimeout(type,18);
+  }
+}
+type();
+
+// Scroll reveal
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      // animate bars
+      e.target.querySelectorAll('.bar-fill').forEach(b=>{
+        b.style.width=b.dataset.w+'%';
+      });
+    }
+  });
+},{threshold:.12});
+reveals.forEach(r=>obs.observe(r));
+
+// Send message button
+document.querySelector('.btn-send').addEventListener('click',function(){
+  this.textContent='Sent! ✓';
+  this.style.background='linear-gradient(135deg,#00e5ff,#22c55e)';
+  setTimeout(()=>{this.textContent='Send Message →';this.style.background=''},3000);
+});
+</script>
+</body>
+</html>
